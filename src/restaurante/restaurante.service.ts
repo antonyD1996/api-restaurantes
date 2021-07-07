@@ -27,7 +27,7 @@ export class RestauranteService {
         }, {
             $project: {
                 _id: '$_id',
-                Calificacion: { $round: ['$puntuacion', 2] },
+                Calificacion: { $round: ['$promedio', 2] },
                 'Mayor Puntuacion': '$mayor',
                 'Menor Puntuacion': '$menor'
 
