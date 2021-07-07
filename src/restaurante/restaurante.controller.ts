@@ -12,10 +12,19 @@ export class RestauranteController {
     obtenerTodos(): Promise<Restaurante[]> {
         return this.servicio.obtenerTodos();
     }
+    @Get('/resumen')
+    obtenerTodosResumen(): Promise<Restaurante[]> {
+        return this.servicio.obtenerTodosResumen();
+    }
 
     @Get(':id')
     obtenerUno(@Param('id') id): Promise<Restaurante> {
         return this.servicio.obtenerUno(id);
+    }
+
+    @Get('/resumen/:id')
+    obtenerUnoResumen(@Param('id') id): Promise<Restaurante> {
+        return this.servicio.obtenerUnoResumen(id);
     }
 
     @Post()

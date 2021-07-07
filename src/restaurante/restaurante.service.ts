@@ -12,8 +12,64 @@ export class RestauranteService {
         return await this.restauranteModel.find();
     }
 
+    async obtenerTodosResumen(): Promise<Restaurante[]> {
+        const resumen = await this.restauranteModel.aggregate([{
+            $unwind: '$Opiniones'
+        }, {
+            $group: {
+                _id: {
+                    restaurante: "$Nombre"
+                },
+                promedio: { $avg: '$Opiniones.Puntuacion' },
+                mayor: { $max: '$Opiniones.Puntuacion' },
+                menor: { $min: '$Opiniones.Puntuacion' }
+            }
+        }, {
+            $project: {
+                _id: '$_id',
+                Calificacion: { $round: ['$puntuacion', 2] },
+                'Mayor Puntuacion': '$mayor',
+                'Menor Puntuacion': '$menor'
+
+            }
+        }
+        ])
+        return resumen
+    }
+
     async obtenerUno(id: String): Promise<Restaurante> {
-        return await this.restauranteModel.findOne({ _id: id });
+        let restaurante = await this.restauranteModel.findOne({ _id: id });
+        return restaurante;
+    }
+
+    async obtenerUnoResumen(id: String): Promise<Restaurante> {
+        let restaurante = await this.restauranteModel.findOne({ _id: id });
+        const restaurantes = await this.restauranteModel.aggregate([{ $unwind: '$Opiniones' }, {
+            $match: { Nombre: { $eq: restaurante.Nombre } }
+        }, {
+            $sort: {
+                "Opiniones.Puntuacion": -1
+            }
+        }, {
+            $group: {
+                _id: {
+                    Restaurante: "$Nombre"
+                },
+                avg: { $avg: '$Opiniones.Puntuacion' },
+                mayor: { $first: '$Opiniones' },
+                menor: { $last: '$Opiniones' }
+            },
+
+        }, {
+            $project: {
+                _id: '$_id',
+                Calificacion: { $round: ['$avg', 2] },
+                'Mayor Puntuacion': '$mayor',
+                'Menor Puntuacion': '$menor'
+
+            }
+        }])
+        return restaurantes[0];
     }
 
     async crear(restaurante: Restaurante): Promise<Restaurante> {
