@@ -1,6 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { ApiBearerAuth, ApiCreatedResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { OpinionClass } from 'src/opinion/opinion.class';
 import { Opinion } from 'src/opinion/opinion.interface';
 import { RestauranteClass } from './restaurante.class';
 import { Restaurante } from './restaurante.interface';
@@ -14,27 +13,30 @@ export class RestauranteController {
 
     }
     @Get()
-    @ApiOperation({ summary: 'Obtener Todos los registros' })
+    @ApiOperation({ summary: 'Obtener todos los restaurantes' })
     @ApiResponse({ status: 201, description: 'Los datos han sido obtenidos exitosamente', type: [RestauranteClass] })
-    obtenerTodos(): Promise<Restaurante[]> {
-        return this.servicio.obtenerTodos();
+    obtenerRestaurantes(): Promise<Restaurante[]> {
+        return this.servicio.obtenerRestaurantes();
     }
 
-    @Get('/resumen')
-    obtenerTodosResumen(): Promise<Restaurante[]> {
-        return this.servicio.obtenerTodosResumen();
+    @Get('resumen')
+    @ApiOperation({ summary: 'Devuelve un resumen de todos los restaurantes' })
+    @ApiResponse({ status: 201, description: 'El Resumen ha sido generado con exito' })
+    obtenerResumenRestaurantes(): Promise<Restaurante[]> {
+        return this.servicio.obtenerResumenRestaurantes();
+    }
+    @Get(':id/resumen')
+    @ApiOperation({ summary: 'Devuelve un resumen de un Restaurante usando su id' })
+    @ApiResponse({ status: 201, description: 'El Resumen ha sido generado con exito' })
+    obtenerResumenRestaurante(@Param('id') id): Promise<Restaurante> {
+        return this.servicio.obtenerResumenRestaurante(id);
     }
 
     @Get(':id')
-    @ApiOperation({ summary: 'Obtener Un Registro usando su id' })
-    @ApiResponse({ status: 201, description: 'El Registro ha sido obtenido con exito', type: [RestauranteClass] })
-    obtenerUno(@Param('id') id): Promise<Restaurante> {
-        return this.servicio.obtenerUno(id);
-    }
-
-    @Get('/resumen/:id')
-    obtenerUnoResumen(@Param('id') id): Promise<Restaurante> {
-        return this.servicio.obtenerUnoResumen(id);
+    @ApiOperation({ summary: 'Obtener un restaurante usando su id' })
+    @ApiResponse({ status: 201, description: 'El restaurante ha sido obtenido con exito', type: [RestauranteClass] })
+    obtenerRestaurante(@Param('id') id): Promise<Restaurante> {
+        return this.servicio.obtenerRestaurante(id);
     }
 
     @Post()
@@ -43,8 +45,8 @@ export class RestauranteController {
         description: 'El Registro ha sido creado exitosamente.',
         type: RestauranteClass,
     })
-    crear(@Body() body: Restaurante): Promise<Restaurante> {
-        return this.servicio.crear(body);
+    crearRestaurante(@Body() body: Restaurante): Promise<Restaurante> {
+        return this.servicio.crearRestaurante(body);
     }
 
     @Put(':id')
@@ -54,38 +56,30 @@ export class RestauranteController {
         description: 'El Registro ha sido actualizado exitosamente.',
         type: RestauranteClass,
     })
-    actualizar(@Param('id') id, @Body() body: Restaurante): Promise<Restaurante> {
-        return this.servicio.update(id, body);
+    actualizarRestaurante(@Param('id') id, @Body() body: Restaurante): Promise<Restaurante> {
+        return this.servicio.actualizarRestaurante(id, body);
     }
 
     @Delete(':id')
     @ApiOperation({ summary: 'Eliminar un restaurante usando su id' })
     @ApiResponse({
         status: 201,
-        description: 'El Registro ha sido actualizado exitosamente.'
+        description: 'El Registro ha sido eliminado exitosamente.'
     })
     delete(@Param('id') id): Promise<Restaurante> {
-        return this.servicio.delete(id)
+        return this.servicio.eliminarRestaurante(id)
     }
 
-    @Post('/opinion/:id')
+    @Post(':id/opinion')
     @ApiOperation({ summary: 'Agregar una opinion usando el id del restaurante' })
     @ApiCreatedResponse({
-        description: 'La opinion ha sido agregada exitosamente',
-        type: OpinionClass,
+        description: 'La opinion ha sido agregada exitosamente'
     })
     agregarOpinion(@Param('id') id, @Body() body: Opinion): Promise<Restaurante> {
         return this.servicio.agregarOpinion(id, body);
     }
 
-    @Put(':id/opinion/:idOpinion')
-    @ApiOperation({ summary: 'Actualizar una opinion usando el id' })
-    @ApiResponse({
-        status: 201,
-        description: 'La opinion ha sido agregada exitosamente',
-        type: OpinionClass,
-    })
-    actualizarOpinion(@Param('id') id, @Param('idOpinion') idOpinion, @Body() body: Opinion): Promise<Restaurante> {
-        return this.servicio.actualizarOpinion(id, idOpinion, body);
-    }
+
+
+
 }

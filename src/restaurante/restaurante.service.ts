@@ -9,11 +9,37 @@ import * as mongoose from 'mongoose'
 export class RestauranteService {
     constructor(@InjectModel('restaurantes') private readonly restauranteModel: Model<Restaurante>) { }
 
-    async obtenerTodos(): Promise<Restaurante[]> {
+    async obtenerRestaurantes(): Promise<Restaurante[]> {
+
         return await this.restauranteModel.find();
     }
 
-    async obtenerTodosResumen(): Promise<Restaurante[]> {
+    async obtenerRestaurante(id: String): Promise<Restaurante> {
+        let restaurante = await this.restauranteModel.findOne({ _id: id });
+        return restaurante;
+    }
+
+
+    async crearRestaurante(restaurante: Restaurante): Promise<Restaurante> {
+        const nuevo = new this.restauranteModel(restaurante);
+        return await nuevo.save();
+    }
+
+    async actualizarRestaurante(id: string, restaurante: Restaurante): Promise<Restaurante> {
+        return await this.restauranteModel.findByIdAndUpdate(id, restaurante, { new: true, useFindAndModify: false });
+    }
+
+    async eliminarRestaurante(id: string): Promise<Restaurante> {
+        return await this.restauranteModel.findByIdAndRemove(id);
+    }
+
+    async agregarOpinion(id: string, opinion: Opinion): Promise<Restaurante> {
+        const restaurante = await this.restauranteModel.findOne({ _id: id })
+        restaurante.Opiniones.push(opinion);
+        return await this.restauranteModel.findByIdAndUpdate(id, restaurante, { new: true, useFindAndModify: false });
+    }
+
+    async obtenerResumenRestaurantes(): Promise<Restaurante[]> {
         const resumen = await this.restauranteModel.aggregate([{
             $unwind: '$Opiniones'
         }, {
@@ -38,12 +64,7 @@ export class RestauranteService {
         return resumen
     }
 
-    async obtenerUno(id: String): Promise<Restaurante> {
-        let restaurante = await this.restauranteModel.findOne({ _id: id });
-        return restaurante;
-    }
-
-    async obtenerUnoResumen(id: string): Promise<Restaurante> {
+    async obtenerResumenRestaurante(id: string): Promise<Restaurante> {
         const restaurantes = await this.restauranteModel.aggregate([
             {
                 $unwind: '$Opiniones'
@@ -73,36 +94,6 @@ export class RestauranteService {
                 }
             }])
         return restaurantes[0];
-    }
-
-    async crear(restaurante: Restaurante): Promise<Restaurante> {
-        const nuevo = new this.restauranteModel(restaurante);
-        return await nuevo.save();
-    }
-
-    async update(id: string, restaurante: Restaurante): Promise<Restaurante> {
-        return await this.restauranteModel.findByIdAndUpdate(id, restaurante, { new: true, useFindAndModify: false });
-    }
-
-    async delete(id: string): Promise<Restaurante> {
-        return await this.restauranteModel.findByIdAndRemove(id);
-    }
-
-    async agregarOpinion(id: string, opinion: Opinion): Promise<Restaurante> {
-        const restaurante = await this.restauranteModel.findOne({ _id: id })
-        restaurante.Opiniones.push(opinion);
-        return await this.restauranteModel.findByIdAndUpdate(id, restaurante, { new: true, useFindAndModify: false });
-    }
-
-    async actualizarOpinion(id: string, idOpinion: string, opinion: Opinion): Promise<Restaurante> {
-        const restaurante = await this.restauranteModel.findOne({ _id: id })
-        const respuesta = restaurante.Opiniones.map(op => JSON.stringify(op))
-        const test = respuesta.forEach(res => console.log(res))
-
-        //console.log(respuesta)
-        console.log(test)
-        return restaurante;
-        //return await this.restauranteModel.findByIdAndUpdate(id, restaurante, { new: true, useFindAndModify: false });
     }
 
 }
