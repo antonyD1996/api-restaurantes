@@ -6,7 +6,8 @@ import { RestauranteModule } from './restaurante/restaurante.module';
 import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
-  imports: [RestauranteModule/*, OpinionModule*/, MongooseModule.forRoot('mongodb+srv://antony:andaduper2096@cluster0.0hgy6.mongodb.net/restaurante?retryWrites=true&w=majority')],
+  imports: [RestauranteModule/*, OpinionModule*/,
+    MongooseModule.forRoot('mongodb+srv://antony:andaduper2096@cluster0.0hgy6.mongodb.net/restaurante?retryWrites=true&w=majority')],
   controllers: [AppController],
   providers: [AppService],
 })

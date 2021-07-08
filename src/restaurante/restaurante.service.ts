@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { Model } from 'mongoose';
+import { Model, Mongoose } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Restaurante } from './restaurante.interface';
 import { Opinion } from 'src/opinion/opinion.interface';
+import * as mongoose from 'mongoose'
 
 @Injectable()
 export class RestauranteService {
@@ -42,33 +43,35 @@ export class RestauranteService {
         return restaurante;
     }
 
-    async obtenerUnoResumen(id: String): Promise<Restaurante> {
-        let restaurante = await this.restauranteModel.findOne({ _id: id });
-        const restaurantes = await this.restauranteModel.aggregate([{ $unwind: '$Opiniones' }, {
-            $match: { Nombre: { $eq: restaurante.Nombre } }
-        }, {
-            $sort: {
-                "Opiniones.Puntuacion": -1
-            }
-        }, {
-            $group: {
-                _id: {
-                    Restaurante: "$Nombre"
+    async obtenerUnoResumen(id: string): Promise<Restaurante> {
+        const restaurantes = await this.restauranteModel.aggregate([
+            {
+                $unwind: '$Opiniones'
+            }, {
+                $match: { _id: new mongoose.Types.ObjectId(id) }
+            }, {
+                $sort: {
+                    "Opiniones.Puntuacion": -1
+                }
+            }, {
+                $group: {
+                    _id: {
+                        Restaurante: "$Nombre"
+                    },
+                    avg: { $avg: '$Opiniones.Puntuacion' },
+                    mayor: { $first: '$Opiniones' },
+                    menor: { $last: '$Opiniones' }
                 },
-                avg: { $avg: '$Opiniones.Puntuacion' },
-                mayor: { $first: '$Opiniones' },
-                menor: { $last: '$Opiniones' }
-            },
 
-        }, {
-            $project: {
-                _id: '$_id',
-                Calificacion: { $round: ['$avg', 2] },
-                'Mayor Puntuacion': '$mayor',
-                'Menor Puntuacion': '$menor'
+            }, {
+                $project: {
+                    _id: '$_id',
+                    Calificacion: { $round: ['$avg', 2] },
+                    'Mayor Puntuacion': '$mayor',
+                    'Menor Puntuacion': '$menor'
 
-            }
-        }])
+                }
+            }])
         return restaurantes[0];
     }
 
@@ -77,11 +80,29 @@ export class RestauranteService {
         return await nuevo.save();
     }
 
+    async update(id: string, restaurante: Restaurante): Promise<Restaurante> {
+        return await this.restauranteModel.findByIdAndUpdate(id, restaurante, { new: true, useFindAndModify: false });
+    }
+
+    async delete(id: string): Promise<Restaurante> {
+        return await this.restauranteModel.findByIdAndRemove(id);
+    }
+
     async agregarOpinion(id: string, opinion: Opinion): Promise<Restaurante> {
         const restaurante = await this.restauranteModel.findOne({ _id: id })
         restaurante.Opiniones.push(opinion);
-        await this.restauranteModel.findByIdAndUpdate(id, restaurante, { useFindAndModify: false });
+        return await this.restauranteModel.findByIdAndUpdate(id, restaurante, { new: true, useFindAndModify: false });
+    }
+
+    async actualizarOpinion(id: string, idOpinion: string, opinion: Opinion): Promise<Restaurante> {
+        const restaurante = await this.restauranteModel.findOne({ _id: id })
+        const respuesta = restaurante.Opiniones.map(op => JSON.stringify(op))
+        const test = respuesta.forEach(res => console.log(res))
+
+        //console.log(respuesta)
+        console.log(test)
         return restaurante;
+        //return await this.restauranteModel.findByIdAndUpdate(id, restaurante, { new: true, useFindAndModify: false });
     }
 
 }

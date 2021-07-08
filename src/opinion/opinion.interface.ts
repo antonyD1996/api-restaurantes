@@ -1,5 +1,5 @@
 export interface Opinion {
-    Id?: Number,
+    Id?: String,
     Nombre: String,
     Comentario: String,
     Puntuacion: Number

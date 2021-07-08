@@ -1,9 +1,9 @@
 import { Opinion } from "src/opinion/opinion.interface";
 
 export interface Restaurante {
-    Id?: Number,
-    Nombre: String,
-    Direccion: String,
-    Telefono: Number,
+    Id?: string,
+    Nombre: string,
+    Direccion: string,
+    Telefono: number,
     Opiniones: Opinion[]
 }
