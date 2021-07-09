@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
-import { ApiOperation, ApiCreatedResponse, ApiTags, ApiResponse } from '@nestjs/swagger';
-import { OpinionClass } from './opinion.class';
+import { ApiOperation, ApiCreatedResponse, ApiTags, ApiResponse, ApiParam, ApiBody } from '@nestjs/swagger';
+import { OpinionDTO } from './opinion.dto';
 import { Opinion } from './opinion.interface';
 import { OpinionService } from './opinion.service';
 
@@ -14,58 +14,119 @@ export class OpinionController {
 
     @Get()
     @ApiOperation({ summary: 'Obtener todas las opiniones' })
-    @ApiResponse({ status: 201, description: 'Los datos han sido obtenidos exitosamente', type: [OpinionClass] })
+    @ApiResponse({ status: 200, description: 'Los datos han sido obtenidos exitosamente', type: [OpinionDTO] })
     obtenerOpiniones(): Promise<Opinion[]> {
         return this.servicio.obtenerOpiniones();
     }
 
     @Get('resumen')
     @ApiOperation({ summary: 'Obtiene un resumen de cada restaurante' })
-    @ApiResponse({ status: 201, description: 'Los datos han sido obtenidos exitosamente' })
+    @ApiResponse({ status: 200, description: 'Los datos han sido obtenidos exitosamente' })
     obtenerResumenPorRestaurantes(): Promise<Opinion[]> {
         return this.servicio.obtenerResumenPorRestaurantes();
     }
 
     @Get('resumen/:id')
+    @ApiParam({
+        name: 'id',
+        type: String,
+        description: 'Id del restaurante para obtener resumen',
+        example: '60e7c031c735a83170b894fd'
+    })
     @ApiOperation({ summary: 'Obtiene el resumen de un restaurante mediante su id' })
-    @ApiResponse({ status: 201, description: 'Los datos han sido obtenidos exitosamente' })
+    @ApiResponse({ status: 200, description: 'Los datos han sido obtenidos exitosamente' })
     obtenerResumenPorRestaurante(@Param('id') id): Promise<Opinion[]> {
         return this.servicio.obtenerResumenPorRestaurante(id);
     }
 
     @Get(':id')
-    @ApiOperation({ summary: 'Obtener opiniones de un restaurante' })
-    @ApiResponse({ status: 201, description: 'Los datos han sido obtenidos exitosamente', type: OpinionClass })
+    @ApiParam({
+        name: 'id',
+        type: String,
+        description: 'Id del restaurante para obtener sus opiniones',
+        example: '60e7c031c735a83170b894fd'
+    })
+    @ApiOperation({ summary: 'Obtener opiniones de un restaurante usando su id' })
+    @ApiResponse({ status: 200, description: 'Los datos han sido obtenidos exitosamente', type: [OpinionDTO] })
     obtenerOpinionesPorRestaurante(@Param('id') id): Promise<Opinion[]> {
         return this.servicio.obtenerOpinionesPorRestaurante(id);
     }
 
     @Post()
-    @ApiOperation({ summary: 'Agregar una opinion' })
+    @ApiBody({
+        description: 'contiene la informacion de la opinion a guardar',
+        schema: {
+            type: 'object',
+            properties: {
+                Nombre: { type: 'string' },
+                Comentario: { type: 'string' },
+                Puntuacion: { type: 'number' },
+                Restaurante: { type: 'string' }
+
+            },
+            example: {
+                Nombre: "Carlos Duarte",
+                Comentario: "Comentario random",
+                Puntuacion: 2,
+                Restaurante: "60e7c031c735a83170b894fd"
+            }
+        }
+    })
+    @ApiOperation({
+        summary: 'Agregar una opinion'
+    })
     @ApiCreatedResponse({
-        description: 'La opinion ha sido agregada exitosamente', type: OpinionClass
+        description: 'La opinion ha sido agregada exitosamente', type: OpinionDTO
     })
     agregarOpinion(@Body() body: Opinion): Promise<Opinion> {
         return this.servicio.agregarOpinion(body);
     }
 
     @Put(':id')
+    @ApiParam({
+        name: 'id',
+        type: String,
+        description: 'Id de la opinion a actualizar',
+        example: '60e7c031c735a83170b894fd'
+    })
+    @ApiBody({
+        description: 'contiene la informacion de la opinion a actualizar',
+        schema: {
+            type: 'object',
+            properties: {
+                Comentario: { type: 'string' },
+                Puntuacion: { type: 'number' }
+
+            },
+            example: {
+                Comentario: "Comentario random",
+                Puntuacion: 2
+            }
+        }
+    })
     @ApiOperation({ summary: 'Actualizar una opinion usando su id' })
     @ApiResponse({
-        status: 201,
-        description: 'El Registro ha sido actualizado exitosamente.', type: OpinionClass
+        status: 200,
+        description: 'El Registro ha sido actualizado exitosamente.', type: OpinionDTO
     })
-    actualizarRestaurante(@Param('id') id, @Body() body: Opinion): Promise<Opinion> {
+    actualizarOpinion(@Param('id') id, @Body() body: Opinion): Promise<Opinion> {
         return this.servicio.actualizarOpinion(id, body);
     }
 
     @Delete(':id')
+    @ApiParam({
+        name: 'id',
+        type: String,
+        description: 'Id de la opinion a eliminar',
+        example: '60e7c031c735a83170b894fd'
+    })
     @ApiOperation({ summary: 'Eliminar una opinion usando su id' })
     @ApiResponse({
-        status: 201,
-        description: 'El Registro ha sido eliminado exitosamente.'
+        status: 200,
+        description: 'El Registro ha sido eliminado exitosamente.',
+        type: OpinionDTO
     })
-    eliminarRestaurante(@Param('id') id): Promise<Opinion> {
+    eliminarOpinion(@Param('id') id): Promise<Opinion> {
         return this.servicio.eliminarOpinion(id)
     }
 
