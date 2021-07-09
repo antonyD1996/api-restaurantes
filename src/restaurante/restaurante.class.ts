@@ -9,6 +9,4 @@ export class RestauranteClass {
     Direccion: string;
     @ApiProperty()
     Telefono: number;
-    @ApiProperty()
-    Opiniones: [];
 }

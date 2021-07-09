@@ -5,8 +5,7 @@ export const RestauranteSchema = new mongoose.Schema(
     {
         Nombre: { type: String, required: true },
         Direccion: { type: String, required: true },
-        Telefono: { type: Number, required: true },
-        Opiniones: { type: [OpinionSchema], required: false }
+        Telefono: { type: Number, required: true }
     },
     {
         versionKey: false,
