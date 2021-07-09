@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Model, Mongoose } from 'mongoose';
+import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Restaurante } from './restaurante.interface';
 
@@ -8,7 +8,6 @@ export class RestauranteService {
     constructor(@InjectModel('restaurantes') private readonly restauranteModel: Model<Restaurante>) { }
 
     async obtenerRestaurantes(): Promise<Restaurante[]> {
-
         return await this.restauranteModel.find();
     }
 

@@ -1,4 +1,3 @@
-import { Opinion } from "src/opinion/opinion.interface";
 
 export interface Restaurante {
     Id?: string,

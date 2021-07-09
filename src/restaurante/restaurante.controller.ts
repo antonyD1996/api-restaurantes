@@ -14,14 +14,14 @@ export class RestauranteController {
     }
     @Get()
     @ApiOperation({ summary: 'Obtener todos los restaurantes' })
-    @ApiResponse({ status: 201, description: 'Los datos han sido obtenidos exitosamente', type: [RestauranteClass] })
+    @ApiResponse({ status: 200, description: 'Los datos han sido obtenidos exitosamente', type: [RestauranteClass] })
     obtenerRestaurantes(): Promise<Restaurante[]> {
         return this.servicio.obtenerRestaurantes();
     }
 
     @Get(':id')
     @ApiOperation({ summary: 'Obtener un restaurante usando su id' })
-    @ApiResponse({ status: 201, description: 'El restaurante ha sido obtenido con exito', type: [RestauranteClass] })
+    @ApiResponse({ status: 200, description: 'El restaurante ha sido obtenido con exito', type: [RestauranteClass] })
     obtenerRestaurante(@Param('id') id): Promise<Restaurante> {
         return this.servicio.obtenerRestaurante(id);
     }
@@ -39,7 +39,7 @@ export class RestauranteController {
     @Put(':id')
     @ApiOperation({ summary: 'Actualizar un restaurante usando su id' })
     @ApiResponse({
-        status: 201,
+        status: 200,
         description: 'El Registro ha sido actualizado exitosamente.',
         type: RestauranteClass,
     })
@@ -50,7 +50,7 @@ export class RestauranteController {
     @Delete(':id')
     @ApiOperation({ summary: 'Eliminar un restaurante usando su id' })
     @ApiResponse({
-        status: 201,
+        status: 200,
         description: 'El Registro ha sido eliminado exitosamente.'
     })
     eliminarRestaurante(@Param('id') id): Promise<Restaurante> {

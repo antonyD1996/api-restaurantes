@@ -22,7 +22,7 @@ export class OpinionService {
         return await this.opinionModel.aggregate([
             {
                 $lookup: {
-                    from: "restaurantes2",
+                    from: "restaurantes",
                     localField: "Restaurante",
                     foreignField: "_id",
                     as: "res"
@@ -57,7 +57,7 @@ export class OpinionService {
             },
             {
                 $lookup: {
-                    from: "restaurantes2",
+                    from: "restaurantes",
                     localField: "Restaurante",
                     foreignField: "_id",
                     as: "res"
