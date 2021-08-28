@@ -10,4 +10,6 @@ export class RestauranteDTO {
     readonly Direccion: String;
     @ApiProperty({ description: 'Telefono del restaurante', example: 70079032 })
     readonly Telefono: Number;
+    @ApiProperty({ description: 'Categoria del restaurante', example: "Comida china" })
+    readonly Categoria: String;
 }

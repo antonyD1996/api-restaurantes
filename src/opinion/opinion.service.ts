@@ -14,6 +14,11 @@ export class OpinionService {
         return await this.opinionModel.find();
     }
 
+    async obtenerOpinion(id: string): Promise<Opinion> {
+
+        return await this.opinionModel.findOne({ _id: id });
+    }
+
     async obtenerOpinionesPorRestaurante(id: string): Promise<Opinion[]> {
         return await this.opinionModel.aggregate([{ $match: { Restaurante: new mongoose.Types.ObjectId(id) } }])
     }
@@ -34,9 +39,13 @@ export class OpinionService {
             {
                 $group: {
                     _id: {
-                        restaurante: "$res.Nombre"
+                        _id: "$res._id",
+                        Nombre: "$res.Nombre",
+                        Direccion: "$res.Direccion",
+                        Telefono: "$res.Telefono",
+                        idCategoria: "$res.idCategoria"
                     },
-                    promedio: { $avg: '$Puntuacion' },
+                    romedio: { $avg: '$Puntuacion' },
                     mayor: { $max: '$Puntuacion' },
                     menor: { $min: '$Puntuacion' }
                 }
@@ -44,8 +53,8 @@ export class OpinionService {
                 $project: {
                     _id: '$_id',
                     Calificacion: { $round: ['$promedio', 2] },
-                    'Mayor Puntuacion': '$mayor',
-                    'Menor Puntuacion': '$menor'
+                    'Mayor': '$mayor',
+                    'Menor': '$menor'
 
                 }
             }])
@@ -69,7 +78,11 @@ export class OpinionService {
             {
                 $group: {
                     _id: {
-                        restaurante: "$res.Nombre"
+                        _id: "$res._id",
+                        Nombre: "$res.Nombre",
+                        Direccion: "$res.Direccion",
+                        Telefono: "$res.Telefono",
+                        idCategoria: "$res.idCategoria"
                     },
                     promedio: { $avg: '$Puntuacion' },
                     mayor: { $max: '$Puntuacion' },
@@ -79,8 +92,8 @@ export class OpinionService {
                 $project: {
                     _id: '$_id',
                     Calificacion: { $round: ['$promedio', 2] },
-                    'Mayor Puntuacion': '$mayor',
-                    'Menor Puntuacion': '$menor'
+                    'Mayor': '$mayor',
+                    'Menor': '$menor'
 
                 }
             }])

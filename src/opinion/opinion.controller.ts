@@ -26,6 +26,19 @@ export class OpinionController {
         return this.servicio.obtenerResumenPorRestaurantes();
     }
 
+    @Get('getOne/:id')
+    @ApiParam({
+        name: 'id',
+        type: String,
+        description: 'Id de la opinion',
+        example: '60e8e2635176890015c13835'
+    })
+    @ApiOperation({ summary: 'Obtiene una opinion usando el id' })
+    @ApiResponse({ status: 200, description: 'Los datos han sido obtenidos exitosamente' })
+    obtenerOpinion(@Param('id') id): Promise<Opinion> {
+        return this.servicio.obtenerOpinion(id);
+    }
+
     @Get('resumen/:id')
     @ApiParam({
         name: 'id',
